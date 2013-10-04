@@ -18,8 +18,8 @@
     - name: Install Apache
       action: apt package=apache2
 
-    - name: Install Git
-      action: apt package=git
+    - name: Start Apache
+      action: service name=apache2 state=started enabled=yes
 
     - file: path=/etc/apache2/sites-available state=absent
     - file: path=/etc/apache2/sites-available state=link src=/vagrant/vagrant/apache2/sites-available
@@ -32,9 +32,10 @@
 
     - file: path=/etc/apache2/ports.conf state=absent
     - file: path=/etc/apache2/ports.conf state=link src=/vagrant/vagrant/apache2/ports.conf
+      notify: Restart Apache
 
-    - name: Start Apache
-      action: service name=apache2 state=started enabled=yes
+    - name: Install Git
+      action: apt package=git
 
     - name: Download composer
       shell: curl -sS https://getcomposer.org/installer | php creates=composer.phar
@@ -44,3 +45,9 @@
 
     - name: Install composer dependencies
       command: composer update --prefer-source chdir=/vagrant
+
+
+  handlers:
+
+    - name: Restart Apache
+      action: service name=apache2 state=restarted
