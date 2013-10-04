@@ -1,0 +1,19 @@
+{
+    "name": "vagrant-raring",
+    "authors": [
+        {
+            "name": "Joe Green",
+            "email": "Joe.Green@smrtr.co.uk"
+        }
+    ],
+    "require": {
+        "hearstuk/zf1-component-auth": "~1.1",
+        "hearstuk/zf1-component-session": "~1.2",
+        "smrtr/datagrid": "~1.3.2"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "src/"
+        }
+    }
+}

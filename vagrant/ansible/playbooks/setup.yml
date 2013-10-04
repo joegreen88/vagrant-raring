@@ -1,0 +1,46 @@
+#
+# Setup with apt-get
+# php5, apache2
+#
+
+- hosts: vagrant
+  user: vagrant
+  sudo: yes
+
+  tasks:
+
+    - name: Install PHP
+      action: apt package=$item
+      with_items:
+        - php5
+        - php5-curl
+
+    - name: Install Apache
+      action: apt package=apache2
+
+    - name: Install Git
+      action: apt package=git
+
+    - file: path=/etc/apache2/sites-available state=absent
+    - file: path=/etc/apache2/sites-available state=link src=/vagrant/vagrant/apache2/sites-available
+
+    - file: path=/etc/apache2/sites-enabled state=absent
+    - file: path=/etc/apache2/sites-enabled state=link src=/vagrant/vagrant/apache2/sites-available
+
+    - file: path=/etc/apache2/apache2.conf state=absent
+    - file: path=/etc/apache2/apache2.conf state=link src=/vagrant/vagrant/apache2/apache2.conf
+
+    - file: path=/etc/apache2/ports.conf state=absent
+    - file: path=/etc/apache2/ports.conf state=link src=/vagrant/vagrant/apache2/ports.conf
+
+    - name: Start Apache
+      action: service name=apache2 state=started enabled=yes
+
+    - name: Download composer
+      shell: curl -sS https://getcomposer.org/installer | php creates=composer.phar
+
+    - name: Globalize composer
+      shell: cp composer.phar /usr/local/bin/composer creates=/usr/local/bin/composer
+
+    - name: Install composer dependencies
+      command: composer update --prefer-source chdir=/vagrant
